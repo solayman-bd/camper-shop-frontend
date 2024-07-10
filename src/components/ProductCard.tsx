@@ -1,6 +1,8 @@
 import React from "react";
+import noImageSrc from "../assets/no-image.png";
 
 export interface IProduct {
+  _id: string;
   name: string;
   description: string;
   price: number;
@@ -17,16 +19,23 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+  const handleImageError = (
+    e: React.SyntheticEvent<HTMLImageElement, Event>
+  ) => {
+    e.currentTarget.src = noImageSrc;
+  };
+
   return (
     <div className="m-1 h-[384px] flex flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-md">
       <a
         className="relative mx-3 mt-3 flex justify-center h-60 overflow-hidden rounded-xl"
-        href="#"
+        href={`/product/${product._id}`}
       >
         <img
           className="object-cover min-w-full"
           src={product.images[0]}
           alt={product.name}
+          onError={handleImageError}
         />
         {product.isFeatured && (
           <span className="absolute top-0 left-0 m-2 rounded-full bg-black px-2 text-center text-sm font-medium text-white">
@@ -35,7 +44,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         )}
       </a>
       <div className="mt-4 px-5 pb-5">
-        <a href="#">
+        <a href={`/product/${product._id}`}>
           <h5 className="text-xl tracking-tight text-slate-900">
             {product.name}
           </h5>

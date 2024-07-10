@@ -8,7 +8,23 @@ const productApi = baseApi.injectEndpoints({
         method: "GET",
       }),
     }),
+    getAllCategories: build.query({
+      query: () => ({
+        url: "/product/get-all-categories",
+        method: "GET",
+      }),
+    }),
+    getAllProducts: build.query({
+      query: () => ({
+        url: "/product/get-all-products",
+        method: "GET",
+      }),
+    }),
   }),
 });
 
-export const { useGetBestSellingProductsQuery } = productApi;
+export const {
+  useGetBestSellingProductsQuery,
+  useGetAllCategoriesQuery,
+  useGetAllProductsQuery,
+} = productApi;
