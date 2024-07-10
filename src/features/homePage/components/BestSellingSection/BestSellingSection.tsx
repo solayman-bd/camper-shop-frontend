@@ -9,11 +9,13 @@ export const BestSellingSection = () => {
   const { data, error, isLoading } = useGetBestSellingProductsQuery(undefined);
   const settings = {
     dots: true,
-    infinite: false,
+    infinite: true,
     speed: 500,
     slidesToShow: 4,
     slidesToScroll: 1,
     initialSlide: 0,
+    autoplay: true,
+    autoplaySpeed: 2500,
     responsive: [
       {
         breakpoint: 1024,
@@ -37,6 +39,7 @@ export const BestSellingSection = () => {
         settings: {
           slidesToShow: 1,
           slidesToScroll: 1,
+          dots: false,
         },
       },
     ],

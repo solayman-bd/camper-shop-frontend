@@ -26,7 +26,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   };
 
   return (
-    <div className="m-1 h-[384px] flex flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-md">
+    <div className="m-1 h-[400px] flex flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-md">
       <a
         className="relative mx-3 mt-3 flex justify-center h-60 overflow-hidden rounded-xl"
         href={`/product/${product._id}`}
@@ -49,6 +49,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             {product.name}
           </h5>
         </a>
+        <p className="text-sm text-gray-600 mt-1">{product.description}</p>
         <div className="mt-2 mb-5 flex items-center justify-between">
           <p>
             <span className="text-3xl font-bold text-slate-900">

@@ -15,7 +15,7 @@ const CategoryCard: React.FC<ICategoryCardProps> = ({ image, _id }) => {
 
   return (
     <div className="m-3">
-      <div className="w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700 hover:scale-95 transition-transform duration-300">
+      <div className="w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700 hover:scale-95 transition-transform duration-300 flex items-center justify-between flex-col  min-h-[360px]">
         <a href="#">
           <img
             className="p-8 rounded-t-lg mx-auto"
