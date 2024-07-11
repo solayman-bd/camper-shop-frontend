@@ -1,5 +1,7 @@
 import React from "react";
 import noImageSrc from "../assets/no-image.png";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../redux/features/cart/cartSlice";
 
 export interface IProduct {
   _id: string;
@@ -12,6 +14,7 @@ export interface IProduct {
   images: string[];
   isFeatured: boolean;
   salesCount: number;
+  cartQuantity?: number;
 }
 
 interface ProductCardProps {
@@ -19,6 +22,10 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+  const dispatch = useDispatch();
+  const handleAddToCart = (product: IProduct) => {
+    dispatch(addToCart(product));
+  };
   const handleImageError = (
     e: React.SyntheticEvent<HTMLImageElement, Event>
   ) => {
@@ -78,8 +85,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           </div>
         </div>
         <a
-          href="#"
+          href="/cart"
           className="flex items-center justify-center rounded-md bg-slate-900 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-300"
+          onClick={() => handleAddToCart(product)}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
