@@ -39,6 +39,7 @@ const footerData: FooterSection[] = [
   },
 ];
 import React from "react";
+import { Link } from "react-router-dom";
 
 const FooterSection: React.FC = () => {
   return (
@@ -53,9 +54,9 @@ const FooterSection: React.FC = () => {
             <ul>
               {section.links.map((link, linkIndex) => (
                 <li key={linkIndex} className="mb-2">
-                  <a href={link.url} className="hover:text-blue-500 text-xl">
+                  <Link to={link.url} className="hover:text-blue-500 text-xl">
                     {link.name}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>

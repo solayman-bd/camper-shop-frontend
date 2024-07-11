@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { FC } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store";
 
 type NavItem = {
   id: number;
@@ -12,7 +14,7 @@ type NavItem = {
 };
 
 const Navbar: FC = () => {
-  const [cartItemCount, setCartItemCount] = useState(5); // Dummy data for cart item count
+  const cart = useSelector((state: RootState) => state.cart);
 
   const navItemData: NavItem[] = [
     { id: 1, name: "Home", url: "/", active: true },
@@ -125,7 +127,7 @@ const Navbar: FC = () => {
               <li key={item.id}>
                 <NavLink
                   to={item.url}
-                  className={`flex items-center block py-2 px-3 ${
+                  className={`flex items-center py-2 px-3 ${
                     item.active ? "bg-blue-700 text-white" : "bg-transparent"
                   } rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white my-1 md:my-0 md:dark:text-blue-500 text-xl md:text-2xl hover:animate-pulse`}
                   aria-current={item.active ? "page" : undefined}
@@ -135,7 +137,7 @@ const Navbar: FC = () => {
                     <div className="relative">
                       {item.svg}
                       <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full h-4 w-5">
-                        {cartItemCount}
+                        {cart.cartItems.length}
                       </span>
                     </div>
                   ) : (

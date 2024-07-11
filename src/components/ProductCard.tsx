@@ -2,7 +2,7 @@ import React from "react";
 import noImageSrc from "../assets/no-image.png";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../redux/features/cart/cartSlice";
-
+import { Link } from "react-router-dom";
 export interface IProduct {
   _id: string;
   name: string;
@@ -34,9 +34,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
   return (
     <div className="m-1 h-[400px] flex flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-md">
-      <a
+      <Link
         className="relative mx-3 mt-3 flex justify-center h-60 overflow-hidden rounded-xl"
-        href={`/product/${product._id}`}
+        to={`/product/${product._id}`}
       >
         <img
           className="object-cover min-w-full"
@@ -49,13 +49,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             Featured
           </span>
         )}
-      </a>
+      </Link>
       <div className="mt-4 px-5 pb-5">
-        <a href={`/product/${product._id}`}>
+        <Link to={`/product/${product._id}`}>
           <h5 className="text-xl tracking-tight text-slate-900">
             {product.name}
           </h5>
-        </a>
+        </Link>
         <p className="text-sm text-gray-600 mt-1">{product.description}</p>
         <div className="mt-2 mb-5 flex items-center justify-between">
           <p>
@@ -84,8 +84,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             </span>
           </div>
         </div>
-        <a
-          href="/cart"
+        <Link
+          to="/cart"
           className="flex items-center justify-center rounded-md bg-slate-900 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-300"
           onClick={() => handleAddToCart(product)}
         >
@@ -104,7 +104,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             />
           </svg>
           Add to cart
-        </a>
+        </Link>
       </div>
     </div>
   );
