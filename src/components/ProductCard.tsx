@@ -2,7 +2,7 @@ import React from "react";
 import noImageSrc from "../assets/no-image.png";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../redux/features/cart/cartSlice";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 export interface IProduct {
   _id: string;
   name: string;
@@ -22,9 +22,11 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const handleAddToCart = (product: IProduct) => {
     dispatch(addToCart(product));
+    navigate("/cart");
   };
   const handleImageError = (
     e: React.SyntheticEvent<HTMLImageElement, Event>
@@ -84,10 +86,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             </span>
           </div>
         </div>
-        <Link
-          to="/cart"
-          className="flex items-center justify-center rounded-md bg-slate-900 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-300"
+        <button
+          type="button"
+          className={`flex items-center justify-center rounded-md ${
+            product.stock == 0
+              ? "bg-gray-700 cursor-not-allowed"
+              : "hover:bg-gray-700 bg-slate-900"
+          }  px-5 py-2.5 text-center text-sm font-medium text-white focus:outline-none focus:ring-4 focus:ring-blue-300`}
           onClick={() => handleAddToCart(product)}
+          disabled={product.stock == 0}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -103,8 +110,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
             />
           </svg>
-          Add to cart
-        </Link>
+          {product.stock == 0 ? "Out Of Stock" : "  Add to cart"}
+        </button>
       </div>
     </div>
   );

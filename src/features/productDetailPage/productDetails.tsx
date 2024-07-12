@@ -1,17 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { IProduct } from "../../components/ProductCard";
 import Navbar from "../../components/NavBar";
 import FooterSection from "../homePage/components/FooterSection/FooterSection";
 import { useGetSingleProductQuery } from "../../redux/features/product/porduct.api";
 import SectionsWraper from "../../components/SectionsWraper";
 import noImg from "../../assets/no-image.png";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../../redux/features/cart/cartSlice";
+import Magnifier from "../../components/imageMagnifier/ImageMagnifier";
 const ProductDetails: React.FC = () => {
+  const navigate = useNavigate();
   const { productId } = useParams<{ productId: string }>();
   const { data, error, isLoading } = useGetSingleProductQuery(
     productId as string
   );
-
+  const dispatch = useDispatch();
   const [product, setProduct] = useState<IProduct | null>(null);
 
   useEffect(() => {
@@ -22,7 +26,8 @@ const ProductDetails: React.FC = () => {
 
   const handleAddToCart = () => {
     if (product) {
-      console.log(`Added ${product.name} to cart.`);
+      dispatch(addToCart(product));
+      navigate("/cart");
     }
   };
 
@@ -60,14 +65,7 @@ const ProductDetails: React.FC = () => {
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col md:flex-row -mx-4 justify-center items-center">
               <div className="md:flex-1 px-4">
-                <div className="h-[460px] rounded-lg bg-gray-300 dark:bg-gray-700 mb-4">
-                  <img
-                    className="w-full h-full object-cover"
-                    src={product?.images[0]}
-                    onError={handleImageError}
-                    alt="Product Image"
-                  />
-                </div>
+                <Magnifier imgSrc={product?.images[0] as string} zoom={5} />
                 <div className="flex -mx-2 mb-4">
                   <div className="w-1/2 px-2">
                     <button

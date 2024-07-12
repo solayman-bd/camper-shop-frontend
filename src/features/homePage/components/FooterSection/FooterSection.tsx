@@ -34,7 +34,6 @@ const footerData: FooterSection[] = [
       { name: "Home", url: "/" },
       { name: "Products", url: "/products" },
       { name: "About Us", url: "/about" },
-      { name: "Contact", url: "/contact" },
     ],
   },
 ];
