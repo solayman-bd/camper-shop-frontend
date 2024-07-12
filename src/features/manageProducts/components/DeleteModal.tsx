@@ -1,22 +1,70 @@
-const DeleteModal = () => {
+import { toast } from "react-toastify";
+import { IProduct } from "../../../components/ProductCard";
+import { useDeleteASingleProductMutation } from "../../../redux/features/product/porduct.api";
+
+interface IDeleteModalInfo {
+  isOpen: boolean;
+  product: IProduct | null;
+}
+
+interface IDeleteModalProps {
+  deleteModalInfo: IDeleteModalInfo;
+  setDeleteModalInfo: React.Dispatch<React.SetStateAction<IDeleteModalInfo>>;
+}
+
+const DeleteModal: React.FC<IDeleteModalProps> = ({
+  setDeleteModalInfo,
+  deleteModalInfo,
+}) => {
+  // Use the mutation hook at the top level
+  const [deleteProduct, { isLoading }] = useDeleteASingleProductMutation();
+
+  const toggleModal = () => {
+    setDeleteModalInfo((prevState) => ({
+      ...prevState,
+      isOpen: !prevState.isOpen,
+      product: null,
+    }));
+  };
+
+  const confirmDelete = async () => {
+    if (deleteModalInfo.product) {
+      const data = {
+        productId: deleteModalInfo.product._id,
+      };
+
+      try {
+        await deleteProduct(data).unwrap(); // Unwrap the promise to handle success or error
+        toast.error(`${deleteModalInfo.product.name} is deleted ........`, {
+          position: "bottom-left",
+        });
+      } catch (error) {
+        toast.error(
+          `Failed to delete ${deleteModalInfo.product.name} ........`,
+          { position: "bottom-left" }
+        );
+      }
+    }
+    setDeleteModalInfo({ isOpen: false, product: null });
+  };
+
   return (
     <div
       id="delete-modal"
       tabIndex={-1}
-      className="fixed hidden top-0 left-0 right-0 z-50 p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full"
+      className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center overflow-y-auto"
     >
       <div className="relative w-full h-auto max-w-md max-h-full">
         <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
           <button
             type="button"
             className="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-800 dark:hover:text-white"
-            data-modal-toggle="delete-modal"
+            onClick={toggleModal}
           >
             <svg
               aria-hidden="true"
               className="w-5 h-5"
               fill="currentColor"
-              viewbox="0 0 20 20"
               xmlns="http://www.w3.org/2000/svg"
             >
               <path
@@ -25,15 +73,13 @@ const DeleteModal = () => {
                 clipRule="evenodd"
               />
             </svg>
-            <span className="sr-only">Close modal</span>
           </button>
           <div className="p-6 text-center">
             <svg
               aria-hidden="true"
-              className="mx-auto mb-4 text-gray-400 w-14 h-14 dark:text-gray-200"
+              className="mx-auto mb-4  text-red-600 w-14 h-14 dark:text-gray-200"
               fill="none"
               stroke="currentColor"
-              viewbox="0 0 24 24"
               xmlns="http://www.w3.org/2000/svg"
             >
               <path
@@ -47,14 +93,14 @@ const DeleteModal = () => {
               Are you sure you want to delete this product?
             </h3>
             <button
-              data-modal-toggle="delete-modal"
+              onClick={confirmDelete}
               type="button"
               className="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-2"
             >
-              Yes, I'm sure
+              {isLoading ? "Deleting..." : "Yes, I'm sure"}
             </button>
             <button
-              data-modal-toggle="delete-modal"
+              onClick={toggleModal}
               type="button"
               className="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600"
             >

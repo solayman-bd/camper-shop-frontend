@@ -9,6 +9,7 @@ export const baseApi = createApi({
     "AllCategory",
     "BestSellingProduct",
     "SingleProduct",
+    "DeleteASingleProduct",
   ],
   endpoints: () => ({}),
 });

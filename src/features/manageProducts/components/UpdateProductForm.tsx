@@ -26,7 +26,7 @@ const UpdateProductForm = () => {
           aria-hidden="true"
           className="w-5 h-5"
           fill="currentColor"
-          viewbox="0 0 20 20"
+          viewBox="0 0 20 20"
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
@@ -75,7 +75,7 @@ const UpdateProductForm = () => {
                         aria-hidden="true"
                         className="w-5 h-5"
                         fill="currentColor"
-                        viewbox="0 0 20 20"
+                        viewBox="0 0 20 20"
                         xmlns="http://www.w3.org/2000/svg"
                       >
                         <path
@@ -94,7 +94,7 @@ const UpdateProductForm = () => {
                         aria-hidden="true"
                         className="w-5 h-5"
                         fill="currentColor"
-                        viewbox="0 0 20 20"
+                        viewBox="0 0 20 20"
                         xmlns="http://www.w3.org/2000/svg"
                       >
                         <path
@@ -113,7 +113,7 @@ const UpdateProductForm = () => {
                         aria-hidden="true"
                         className="w-5 h-5"
                         fill="currentColor"
-                        viewbox="0 0 20 20"
+                        viewBox="0 0 20 20"
                         xmlns="http://www.w3.org/2000/svg"
                       >
                         <path
@@ -132,7 +132,7 @@ const UpdateProductForm = () => {
                         aria-hidden="true"
                         className="w-5 h-5"
                         fill="currentColor"
-                        viewbox="0 0 20 20"
+                        viewBox="0 0 20 20"
                         xmlns="http://www.w3.org/2000/svg"
                       >
                         <path
@@ -151,7 +151,7 @@ const UpdateProductForm = () => {
                         aria-hidden="true"
                         className="w-5 h-5"
                         fill="currentColor"
-                        viewbox="0 0 20 20"
+                        viewBox="0 0 20 20"
                         xmlns="http://www.w3.org/2000/svg"
                       >
                         <path
@@ -172,7 +172,7 @@ const UpdateProductForm = () => {
                         aria-hidden="true"
                         className="w-5 h-5"
                         fill="currentColor"
-                        viewbox="0 0 20 20"
+                        viewBox="0 0 20 20"
                         xmlns="http://www.w3.org/2000/svg"
                       >
                         <path
@@ -191,7 +191,7 @@ const UpdateProductForm = () => {
                         aria-hidden="true"
                         className="w-5 h-5"
                         fill="currentColor"
-                        viewbox="0 0 20 20"
+                        viewBox="0 0 20 20"
                         xmlns="http://www.w3.org/2000/svg"
                       >
                         <path
@@ -213,7 +213,7 @@ const UpdateProductForm = () => {
                     aria-hidden="true"
                     className="w-5 h-5"
                     fill="currentColor"
-                    viewbox="0 0 20 20"
+                    viewBox="0 0 20 20"
                     xmlns="http://www.w3.org/2000/svg"
                   >
                     <path
@@ -276,7 +276,7 @@ const UpdateProductForm = () => {
                     aria-hidden="true"
                     className="w-5 h-5"
                     fill="currentColor"
-                    viewbox="0 0 20 20"
+                    viewBox="0 0 20 20"
                     xmlns="http://www.w3.org/2000/svg"
                   >
                     <path
@@ -301,7 +301,7 @@ const UpdateProductForm = () => {
                     aria-hidden="true"
                     className="w-5 h-5"
                     fill="currentColor"
-                    viewbox="0 0 20 20"
+                    viewBox="0 0 20 20"
                     xmlns="http://www.w3.org/2000/svg"
                   >
                     <path
@@ -326,7 +326,7 @@ const UpdateProductForm = () => {
                     aria-hidden="true"
                     className="w-5 h-5"
                     fill="currentColor"
-                    viewbox="0 0 20 20"
+                    viewBox="0 0 20 20"
                     xmlns="http://www.w3.org/2000/svg"
                   >
                     <path
@@ -351,7 +351,7 @@ const UpdateProductForm = () => {
                     aria-hidden="true"
                     className="w-5 h-5"
                     fill="currentColor"
-                    viewbox="0 0 20 20"
+                    viewBox="0 0 20 20"
                     xmlns="http://www.w3.org/2000/svg"
                   >
                     <path
@@ -375,7 +375,7 @@ const UpdateProductForm = () => {
                     className="w-10 h-10 mb-3 text-gray-400"
                     fill="none"
                     stroke="currentColor"
-                    viewbox="0 0 24 24"
+                    viewBox="0 0 24 24"
                     xmlns="http://www.w3.org/2000/svg"
                   >
                     <path
@@ -417,7 +417,7 @@ const UpdateProductForm = () => {
                 aria-hidden="true"
                 className="w-5 h-5 text-gray-500 dark:text-gray-400"
                 fill="currentColor"
-                viewbox="0 0 20 20"
+                viewBox="0 0 20 20"
                 xmlns="http://www.w3.org/2000/svg"
               >
                 <path
@@ -557,7 +557,7 @@ const UpdateProductForm = () => {
             aria-hidden="true"
             className="w-5 h-5 mr-1 -ml-1"
             fill="currentColor"
-            viewbox="0 0 20 20"
+            viewBox="0 0 20 20"
             xmlns="http://www.w3.org/2000/svg"
           >
             <path

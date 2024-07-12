@@ -28,7 +28,7 @@ const Navbar: FC = () => {
       active: false,
     },
     {
-      id: 4,
+      id: 10,
       name: "CartItem",
       url: "/cart",
       active: false,

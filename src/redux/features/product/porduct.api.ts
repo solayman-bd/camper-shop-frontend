@@ -30,6 +30,22 @@ const productApi = baseApi.injectEndpoints({
       }),
       providesTags: ["SingleProduct"],
     }),
+    deleteASingleProduct: build.mutation({
+      query: (data) => ({
+        url: "/product/delete-a-product",
+        method: "DELETE",
+        body: data,
+      }),
+      invalidatesTags: ["AllProduct", "BestSellingProduct", "AllCategory"],
+    }),
+    createASingleProduct: build.mutation({
+      query: (data) => ({
+        url: "/product/create-a-product",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["AllProduct", "BestSellingProduct", "AllCategory"],
+    }),
   }),
 });
 
@@ -38,4 +54,6 @@ export const {
   useGetAllCategoriesQuery,
   useGetAllProductsQuery,
   useGetSingleProductQuery,
+  useDeleteASingleProductMutation,
+  useCreateASingleProductMutation,
 } = productApi;

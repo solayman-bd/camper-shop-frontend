@@ -1,4 +1,3 @@
-import ProductModal from "./components/ProductModal";
 import DeleteModal from "./components/DeleteModal";
 import UpdateProductForm from "./components/UpdateProductForm";
 import { useState } from "react";
@@ -7,15 +6,25 @@ import { IProduct } from "../../components/ProductCard";
 import SectionsWraper from "../../components/SectionsWraper";
 import Navbar from "../../components/NavBar";
 import FooterSection from "../homePage/components/FooterSection/FooterSection";
+import ProductModal from "./components/ProductModal";
 
 const ManageProducts = () => {
   const [isAddProductModalOpen, setAddProductModalOpen] =
     useState<boolean>(false);
-  const [isDeleteProductModalOpen, setDeleteProductModalOpen] =
-    useState<boolean>(false);
+  const [deleteModalInfo, setDeleteModalInfo] = useState<{
+    isOpen: boolean;
+    product: IProduct | null;
+  }>({ isOpen: false, product: null });
+
   const [isEditProductModalOpen, setEditProductModalOpen] =
     useState<boolean>(false);
-
+  const handleDelete = (product: IProduct) => {
+    setDeleteModalInfo((prevState) => ({
+      ...prevState,
+      isOpen: !prevState.isOpen,
+      product: product,
+    }));
+  };
   const { data, error, isLoading } = useGetAllProductsQuery(undefined);
   return (
     <div>
@@ -50,7 +59,6 @@ const ManageProducts = () => {
                           aria-hidden="true"
                           className="w-5 h-5 text-gray-500 dark:text-gray-400"
                           fill="currentColor"
-                          viewbox="0 0 20 20"
                           xmlns="http://www.w3.org/2000/svg"
                         >
                           <path
@@ -64,7 +72,7 @@ const ManageProducts = () => {
                         type="text"
                         id="simple-search"
                         placeholder="Search for products"
-                        required=""
+                        required={false}
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                       />
                     </div>
@@ -83,7 +91,6 @@ const ManageProducts = () => {
                     <svg
                       className="h-3.5 w-3.5 mr-1.5 -ml-1"
                       fill="currentColor"
-                      viewbox="0 0 20 20"
                       xmlns="http://www.w3.org/2000/svg"
                       aria-hidden="true"
                     >
@@ -121,7 +128,7 @@ const ManageProducts = () => {
                             data-accordion-icon=""
                             className="w-5 h-5 rotate-180 shrink-0"
                             fill="currentColor"
-                            viewbox="0 0 20 20"
+                            viewBox="0 0 20 20"
                             xmlns="http://www.w3.org/2000/svg"
                           >
                             <path
@@ -271,6 +278,7 @@ const ManageProducts = () => {
                             <button
                               type="button"
                               className="py-2 px-3 flex items-center text-sm font-medium text-center text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-primary-300 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                              onClick={() => handleDelete(product)}
                             >
                               <svg
                                 aria-hidden="true"
@@ -312,7 +320,12 @@ const ManageProducts = () => {
         {/* Preview Drawer */}
 
         {/* Delete Modal */}
-        <DeleteModal />
+        {deleteModalInfo.isOpen && (
+          <DeleteModal
+            setDeleteModalInfo={setDeleteModalInfo}
+            deleteModalInfo={deleteModalInfo}
+          />
+        )}
       </SectionsWraper>
       <FooterSection />
     </div>

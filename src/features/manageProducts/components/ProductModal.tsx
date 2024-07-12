@@ -1,4 +1,10 @@
+import { useState } from "react";
 import { IProduct } from "../../../components/ProductCard";
+import {
+  useCreateASingleProductMutation,
+  useGetAllCategoriesQuery,
+} from "../../../redux/features/product/porduct.api";
+import { toast } from "react-toastify";
 
 interface IProductModalProps {
   isAddProductModalOpen: boolean;
@@ -6,11 +12,110 @@ interface IProductModalProps {
   product?: IProduct;
 }
 
+interface IFormData {
+  name: string;
+  description: string;
+  price: number;
+  category: string;
+  stock: number;
+  ratings: number;
+  isFeatured: boolean;
+  images: ArrayBuffer[] | [];
+}
+
 const ProductModal: React.FC<IProductModalProps> = ({
   isAddProductModalOpen,
   setAddProductModalOpen,
   product,
 }) => {
+  const [createASingleProduct] = useCreateASingleProductMutation();
+  const initialFormState = {
+    name: "",
+    description: "",
+    price: 0,
+    category: "",
+    stock: 0,
+    ratings: 0,
+    isFeatured: false,
+    images: [],
+  };
+  const [addNewCategory, setAddNewCategory] = useState<boolean>(false);
+  const { data } = useGetAllCategoriesQuery(undefined);
+  const categories = data?.data;
+
+  const [image, setImage] = useState<string | ArrayBuffer | null>(null);
+  const [error, setError] = useState<string>("");
+  const [formData, setFormData] = useState<IFormData>(initialFormState);
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+
+    if (file) {
+      const validTypes = [
+        "image/jpeg",
+        "image/png",
+        "image/gif",
+        "image/svg+xml",
+      ];
+      const maxSize = 3 * 1024 * 1024; // 1 MB
+
+      if (!validTypes.includes(file.type)) {
+        setError("Please upload a valid image (SVG, PNG, JPG, or GIF).");
+        return;
+      }
+
+      if (file.size > maxSize) {
+        setError("File size must be less than 3 MB.");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImage(reader.result);
+        setError("");
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleImageRemove = () => {
+    setImage(null);
+    setError("");
+  };
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!image) {
+      setError("Please Upload an Image..");
+      return false;
+    }
+    // Collect all the data for the API call
+    const productData = {
+      name: formData.name,
+      description: formData.description,
+      price: formData.price,
+      category: formData.category,
+      stock: formData.stock,
+      ratings: formData.ratings,
+      isFeatured: formData.isFeatured,
+      images: [image],
+    };
+
+    try {
+      const result = await createASingleProduct(productData).unwrap();
+      if (result.success) {
+        toast.success("Product is created successfully....", {
+          position: "bottom-left",
+        });
+        setFormData(initialFormState);
+        setImage(null);
+        setAddProductModalOpen(!isAddProductModalOpen);
+      }
+    } catch (error) {
+      toast.error(`Failed to create an order...${error.data.message}`, {
+        position: "bottom-left",
+      });
+    }
+  };
   return (
     <div
       id="createProductModal"
@@ -47,7 +152,7 @@ const ProductModal: React.FC<IProductModalProps> = ({
             </button>
           </div>
           {/* Modal body */}
-          <form action="#">
+          <form onSubmit={handleSubmit}>
             <div className="grid gap-4 mb-4 sm:grid-cols-2">
               <div>
                 <label
@@ -58,11 +163,18 @@ const ProductModal: React.FC<IProductModalProps> = ({
                 </label>
                 <input
                   type="text"
+                  value={formData.name}
                   name="name"
                   id="name"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                   placeholder="Type product name"
-                  required=""
+                  required={true}
+                  onChange={(e) =>
+                    setFormData((prevState) => ({
+                      ...prevState,
+                      name: e.target.value,
+                    }))
+                  }
                 />
               </div>
               <div>
@@ -70,33 +182,79 @@ const ProductModal: React.FC<IProductModalProps> = ({
                   htmlFor="category"
                   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                 >
-                  Category
+                  <span
+                    className="mr-2 hover:cursor-pointer underline"
+                    onClick={() => setAddNewCategory(false)}
+                  >
+                    Select Category
+                  </span>
+                  <span
+                    onClick={() => setAddNewCategory(true)}
+                    className=" underline text-blue-500 hover:cursor-pointer"
+                  >
+                    Add New Category
+                  </span>
                 </label>
-                <select
-                  id="category"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                >
-                  <option selected="">Select category</option>
-                  <option value="TV">TV/Monitors</option>
-                  <option value="PC">PC</option>
-                  <option value="GA">Gaming/Console</option>
-                  <option value="PH">Phones</option>
-                </select>
+                {addNewCategory == false ? (
+                  <select
+                    id="category"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                    onChange={(e) =>
+                      setFormData((prevState) => ({
+                        ...prevState,
+                        category: e.target.value,
+                      }))
+                    }
+                    required={true}
+                    value={formData.category}
+                  >
+                    <option value="">Select Category</option>
+                    {categories?.map(
+                      (rating: { _id: string; image: string }) => (
+                        <option key={rating._id} value={rating._id}>
+                          {rating._id}
+                        </option>
+                      )
+                    )}
+                  </select>
+                ) : (
+                  <input
+                    type="text"
+                    name="category"
+                    id="category"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                    placeholder="Type new category"
+                    required={true}
+                    onChange={(e) =>
+                      setFormData((prevState) => ({
+                        ...prevState,
+                        category: e.target.value,
+                      }))
+                    }
+                    value={formData.category}
+                  />
+                )}
               </div>
               <div>
                 <label
-                  htmlFor="brand"
+                  htmlFor="description"
                   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                 >
-                  Brand
+                  Stock
                 </label>
                 <input
-                  type="text"
-                  name="brand"
-                  id="brand"
+                  type="number"
+                  name="stock"
+                  id="stock"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                  placeholder="Product brand"
-                  required=""
+                  placeholder="Stock"
+                  required={true}
+                  onChange={(e) =>
+                    setFormData((prevState) => ({
+                      ...prevState,
+                      stock: Number(e.target.value),
+                    }))
+                  }
                 />
               </div>
               <div>
@@ -112,74 +270,41 @@ const ProductModal: React.FC<IProductModalProps> = ({
                   id="price"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                   placeholder="$2999"
-                  required=""
+                  required={true}
+                  onChange={(e) =>
+                    setFormData((prevState) => ({
+                      ...prevState,
+                      price: Number(e.target.value),
+                    }))
+                  }
                 />
               </div>
-              <div className="grid gap-4 sm:col-span-2 md:gap-6 sm:grid-cols-4">
-                <div>
-                  <label
-                    htmlFor="weight"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  >
-                    Item weight (kg)
-                  </label>
-                  <input
-                    type="number"
-                    name="weight"
-                    id="weight"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                    placeholder="12"
-                    required=""
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="length"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  >
-                    Lenght (cm)
-                  </label>
-                  <input
-                    type="number"
-                    name="length"
-                    id="length"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                    placeholder="105"
-                    required=""
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="breadth"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  >
-                    Breadth (cm)
-                  </label>
-                  <input
-                    type="number"
-                    name="breadth"
-                    id="breadth"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                    placeholder="15"
-                    required=""
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="width"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  >
-                    Width (cm)
-                  </label>
-                  <input
-                    type="number"
-                    name="width"
-                    id="width"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                    placeholder="23"
-                    required=""
-                  />
-                </div>
+              <div>
+                <label
+                  htmlFor="ratings"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  Ratings
+                </label>
+                <select
+                  id="ratings"
+                  name="ratings"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                  required
+                  onChange={(e) =>
+                    setFormData((prevState) => ({
+                      ...prevState,
+                      ratings: Number(e.target.value),
+                    }))
+                  }
+                >
+                  <option value="">Select rating</option>
+                  {[1, 2, 3, 4, 5].map((rating) => (
+                    <option key={rating} value={rating}>
+                      {rating}
+                    </option>
+                  ))}
+                </select>
               </div>
               <div className="sm:col-span-2">
                 <label
@@ -190,60 +315,43 @@ const ProductModal: React.FC<IProductModalProps> = ({
                 </label>
                 <textarea
                   id="description"
-                  rows="4"
+                  rows={4}
                   className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                   placeholder="Write product description here"
+                  onChange={(e) =>
+                    setFormData((prevState) => ({
+                      ...prevState,
+                      description: e.target.value,
+                    }))
+                  }
+                  required={true}
                 ></textarea>
               </div>
             </div>
             <div className="mb-4 space-y-4 sm:flex sm:space-y-0">
               <div className="flex items-center mr-4">
                 <input
-                  id="inline-checkbox"
+                  id="isFeatured"
                   type="checkbox"
-                  value=""
-                  name="sellingType"
+                  name="isFeatured"
                   className="w-4 h-4 bg-gray-100 rounded border-gray-300 text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                  onChange={(e) =>
+                    setFormData((prevState) => ({
+                      ...prevState,
+                      isFeatured: e.target.checked,
+                    }))
+                  }
+                  required={false}
                 />
                 <label
-                  htmlFor="inline-checkbox"
+                  htmlFor="isFeatured"
                   className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
                 >
-                  In-store only
-                </label>
-              </div>
-              <div className="flex items-center mr-4">
-                <input
-                  id="inline-2-checkbox"
-                  type="checkbox"
-                  value=""
-                  name="sellingType"
-                  className="w-4 h-4 bg-gray-100 rounded border-gray-300 text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                />
-                <label
-                  htmlFor="inline-2-checkbox"
-                  className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                >
-                  Online selling only
-                </label>
-              </div>
-              <div className="flex items-center mr-4">
-                <input
-                  checked=""
-                  id="inline-checked-checkbox"
-                  type="checkbox"
-                  value=""
-                  name="sellingType"
-                  className="w-4 h-4 bg-gray-100 rounded border-gray-300 text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                />
-                <label
-                  htmlFor="inline-checked-checkbox"
-                  className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                >
-                  Both in-store and online
+                  Is Featured
                 </label>
               </div>
             </div>
+            {/* open */}
             <div className="mb-4">
               <span className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                 Product Images
@@ -253,34 +361,60 @@ const ProductModal: React.FC<IProductModalProps> = ({
                   htmlFor="dropzone-file"
                   className="flex flex-col justify-center items-center w-full h-64 bg-gray-50 rounded-lg border-2 border-gray-300 border-dashed cursor-pointer dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
                 >
-                  <div className="flex flex-col justify-center items-center pt-5 pb-6">
-                    <svg
-                      aria-hidden="true"
-                      className="mb-3 w-10 h-10 text-gray-400"
-                      fill="none"
-                      stroke="currentColor"
-                      viewbox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                      />
-                    </svg>
-                    <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                      <span className="font-semibold">Click to upload</span>
-                      or drag and drop
-                    </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                      SVG, PNG, JPG or GIF (MAX. 800x400px)
-                    </p>
-                  </div>
-                  <input id="dropzone-file" type="file" className="hidden" />
+                  {image ? (
+                    <img
+                      src={image as string}
+                      alt="Uploaded preview"
+                      className="h-full w-full object-cover rounded-lg"
+                    />
+                  ) : (
+                    <div className="flex flex-col justify-center items-center pt-5 pb-6">
+                      <svg
+                        aria-hidden="true"
+                        className="mb-3 w-10 h-10 text-gray-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                        />
+                      </svg>
+                      <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                        <span className="font-semibold">Click to upload</span>
+                        or drag and drop
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        SVG, PNG, JPG or GIF (MAX. 800x400px)
+                      </p>
+                    </div>
+                  )}
+                  <input
+                    id="dropzone-file"
+                    type="file"
+                    className="hidden"
+                    onChange={handleImageUpload}
+                  />
                 </label>
+                {error && <p className="text-red-500 text-sm">{error}</p>}
               </div>
+              {image && (
+                <button
+                  type="button"
+                  onClick={handleImageRemove}
+                  className="mt-2 text-red-600 hover:text-red-800"
+                >
+                  Remove Image
+                </button>
+              )}
             </div>
+
+            {/* close */}
+
             <div className="items-center space-y-4 sm:flex sm:space-y-0 sm:space-x-4">
               <button
                 type="submit"
@@ -292,7 +426,7 @@ const ProductModal: React.FC<IProductModalProps> = ({
                 <svg
                   className="mr-1 -ml-1 w-5 h-5"
                   fill="currentColor"
-                  viewbox="0 0 20 20"
+                  viewBox="0 0 20 20"
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
@@ -311,7 +445,7 @@ const ProductModal: React.FC<IProductModalProps> = ({
                 <svg
                   className="mr-1 -ml-1 w-5 h-5"
                   fill="currentColor"
-                  viewbox="0 0 20 20"
+                  viewBox="0 0 20 20"
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
