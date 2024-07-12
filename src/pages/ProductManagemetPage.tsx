@@ -1,7 +1,7 @@
-import ProductsManagement from "../features/productManagement/productManagement";
+import ManageProducts from "../features/manageProducts/ManageProducts";
 
 const ProductManagemetPage = () => {
-  return <ProductsManagement />;
+  return <ManageProducts />;
 };
 
 export default ProductManagemetPage;
