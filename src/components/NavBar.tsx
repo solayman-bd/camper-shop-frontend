@@ -20,6 +20,7 @@ const Navbar: FC = () => {
     { id: 1, name: "Home", url: "/", active: true },
     { id: 2, name: "Products", url: "/products", active: false },
     { id: 3, name: "Contact Us", url: "/contact-us", active: false },
+    { id: 5, name: "About Us", url: "/about", active: false },
     {
       id: 4,
       name: "CartItem",
