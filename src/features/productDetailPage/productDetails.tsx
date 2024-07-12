@@ -5,7 +5,7 @@ import Navbar from "../../components/NavBar";
 import FooterSection from "../homePage/components/FooterSection/FooterSection";
 import { useGetSingleProductQuery } from "../../redux/features/product/porduct.api";
 import SectionsWraper from "../../components/SectionsWraper";
-import noImg from "../../assets/no-image.png";
+
 import { useDispatch } from "react-redux";
 import { addToCart } from "../../redux/features/cart/cartSlice";
 import Magnifier from "../../components/imageMagnifier/ImageMagnifier";
@@ -29,12 +29,6 @@ const ProductDetails: React.FC = () => {
       dispatch(addToCart(product));
       navigate("/cart");
     }
-  };
-
-  const handleImageError = (
-    e: React.SyntheticEvent<HTMLImageElement, Event>
-  ) => {
-    e.currentTarget.src = noImg;
   };
 
   if (isLoading) {

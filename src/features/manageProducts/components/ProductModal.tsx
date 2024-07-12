@@ -27,7 +27,8 @@ const ProductModal: React.FC<IProductModalProps> = ({
   isAddProductModalOpen,
   setAddProductModalOpen,
 }) => {
-  const [createASingleProduct] = useCreateASingleProductMutation();
+  const [createASingleProduct, { isLoading }] =
+    useCreateASingleProductMutation();
   const initialFormState = {
     name: "",
     description: "",
@@ -109,7 +110,8 @@ const ProductModal: React.FC<IProductModalProps> = ({
         setImage(null);
         setAddProductModalOpen(!isAddProductModalOpen);
       }
-    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
       toast.error(`Failed to create an order...${error.data.message}`, {
         position: "bottom-left",
       });
@@ -419,24 +421,12 @@ const ProductModal: React.FC<IProductModalProps> = ({
                 type="submit"
                 className="w-full sm:w-auto justify-center text-white inline-flex bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
               >
-                Add product
+                {!isLoading && "Submit"}
+                {isLoading && <span>Loading...</span>}
               </button>
-              <button className="w-full sm:w-auto text-white justify-center inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
-                <svg
-                  className="mr-1 -ml-1 w-5 h-5"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                Schedule
-              </button>
+
               <button
+                onClick={() => setAddProductModalOpen(!isAddProductModalOpen)}
                 data-modal-toggle="createProductModal"
                 type="button"
                 className="w-full justify-center sm:w-auto text-gray-500 inline-flex items-center bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-primary-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600"

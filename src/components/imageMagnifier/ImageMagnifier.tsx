@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
-import "./Magnifier.css"; // Assuming you move the CSS to a separate file
-
+import "./Magnifier.css";
+import noImg from "../../assets/no-image.png";
 interface MagnifierProps {
   imgSrc: string;
   zoom: number;
@@ -9,6 +9,11 @@ interface MagnifierProps {
 const Magnifier: React.FC<MagnifierProps> = ({ imgSrc, zoom }) => {
   const imgRef = useRef<HTMLImageElement>(null);
   const glassRef = useRef<HTMLDivElement>(null);
+  const handleImageError = (
+    e: React.SyntheticEvent<HTMLImageElement, Event>
+  ) => {
+    e.currentTarget.src = noImg;
+  };
 
   useEffect(() => {
     const img = imgRef.current;
@@ -93,6 +98,7 @@ const Magnifier: React.FC<MagnifierProps> = ({ imgSrc, zoom }) => {
       <img
         ref={imgRef}
         src={imgSrc}
+        onError={handleImageError}
         alt="Magnifier"
         width="600"
         height="400"

@@ -1,5 +1,4 @@
 import DeleteModal from "./components/DeleteModal";
-import UpdateProductForm from "./components/UpdateProductModal";
 import { useState } from "react";
 import { useGetAllProductsQuery } from "../../redux/features/product/porduct.api";
 import { IProduct } from "../../components/ProductCard";
@@ -32,7 +31,7 @@ const ManageProducts = () => {
       product: product,
     }));
   };
-  const { data, error, isLoading } = useGetAllProductsQuery(undefined);
+  const { data } = useGetAllProductsQuery(undefined);
   return (
     <div>
       <Navbar />
